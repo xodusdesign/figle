@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Figle — Figma Preview</title>
+<style>
+	:root {
+		--bg: #1e1e22;
+		--panel: #26262b;
+		--panel-2: #2e2e34;
+		--border: rgba(255, 255, 255, 0.09);
+		--text: #f2f2f4;
+		--muted: #a7a7b3;
+		--accent: #a259ff;
+		--accent-2: #1abcfe;
+		--green: #0fa958;
+		--radius: 12px;
+		--font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+	}
+	:root[data-theme="LIGHT"], :root[data-theme="LIGHTGRAY"] {
+		--bg: #f4f4f6;
+		--panel: #ffffff;
+		--panel-2: #eef0f3;
+		--border: rgba(0, 0, 0, 0.09);
+		--text: #19191d;
+		--muted: #6b6b76;
+	}
+	* { box-sizing: border-box; }
+	html, body {
+		margin: 0; padding: 0;
+		background: var(--bg); color: var(--text);
+		font-family: var(--font);
+		min-height: 100vh;
+	}
+	body { padding: 20px; }
+	.wrap { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+	.header {
+		display: flex; align-items: center; gap: 14px;
+		background: var(--panel); border: 1px solid var(--border);
+		border-radius: var(--radius); padding: 14px 16px;
+	}
+	.mark {
+		width: 44px; height: 44px; border-radius: 12px; flex: 0 0 auto;
+		background: linear-gradient(135deg, #1abcfe 0%, #a259ff 55%, #ff7262 100%);
+		display: flex; align-items: center; justify-content: center;
+		font-weight: 800; font-size: 22px; color: #fff;
+	}
+	.header h1 { font-size: 16px; margin: 0; word-break: break-all; }
+	.header p { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+	.badge {
+		margin-left: auto; flex: 0 0 auto;
+		font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+		padding: 6px 10px; border-radius: 999px;
+		background: var(--panel-2); border: 1px solid var(--border); color: var(--muted);
+	}
+	.badge.ok { color: #fff; background: var(--green); border-color: transparent; }
+
+	.preview {
+		background: var(--panel); border: 1px solid var(--border);
+		border-radius: var(--radius); overflow: hidden;
+	}
+	.preview .bar {
+		display: flex; align-items: center; gap: 8px;
+		padding: 10px 14px; border-bottom: 1px solid var(--border);
+		font-size: 12px; color: var(--muted); font-weight: 600;
+		letter-spacing: 0.04em; text-transform: uppercase;
+	}
+	.preview img {
+		display: block; width: 100%; max-height: 62vh;
+		object-fit: contain; object-position: center;
+		background:
+			linear-gradient(45deg, rgba(128,128,128,.14) 25%, transparent 25%, transparent 75%, rgba(128,128,128,.14) 75%),
+			linear-gradient(45deg, rgba(128,128,128,.14) 25%, transparent 25%, transparent 75%, rgba(128,128,128,.14) 75%);
+		background-size: 24px 24px;
+		background-position: 0 0, 12px 12px;
+	}
+	.hint {
+		padding: 10px 14px; font-size: 12px; color: var(--muted);
+		border-top: 1px solid var(--border); line-height: 1.5;
+	}
+
+	.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+	@media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+	.card {
+		background: var(--panel); border: 1px solid var(--border);
+		border-radius: var(--radius); padding: 14px 16px;
+	}
+	.card h2 { font-size: 12px; margin: 0 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+	.row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--border); font-size: 13px; }
+	.row:first-of-type { border-top: none; }
+	.row .k { color: var(--muted); flex: 0 0 auto; }
+	.row .v { text-align: right; word-break: break-all; font-variant-numeric: tabular-nums; }
+	.mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; }
+
+	.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+	.btn {
+		appearance: none; border: 1px solid var(--border);
+		background: var(--panel-2); color: var(--text);
+		border-radius: 10px; padding: 10px 14px;
+		font-size: 13px; font-weight: 600; cursor: pointer;
+		display: inline-flex; align-items: center; gap: 8px;
+	}
+	.btn:hover { filter: brightness(1.08); }
+	.btn.primary { background: var(--accent); border-color: transparent; color: #fff; }
+	.note { font-size: 12px; color: var(--muted); line-height: 1.6; }
+	.note a { color: var(--accent-2); }
+	.err {
+		background: #3a1f24; color: #ffd9de; border: 1px solid #7a2f3a;
+		border-radius: 10px; padding: 10px 14px; font-size: 13px; display: none;
+	}
+	:root[data-theme="LIGHT"] .err, :root[data-theme="LIGHTGRAY"] .err { background: #fdebec; color: #8c1d29; border-color: #f3b7be; }
+</style>
+</head>
+<body>
+<div class="wrap">
+	<div class="header">
+		<div class="mark">F</div>
+		<div>
+			<h1 id="fileName">Figma file</h1>
+			<p id="fileSub">Loading…</p>
+		</div>
+		<div class="badge" id="formatBadge">.FIG</div>
+	</div>
+
+	<div class="err" id="err"></div>
+
+	<div class="preview">
+		<div class="bar"><span>Preview</span><span style="margin-left:auto" id="dimLabel"></span></div>
+		<img id="viewer" alt="Figma file preview" />
+		<div class="hint" id="previewHint">Showing the embedded cover stored inside the .fig file. Full canvas editing still needs the Figma app — this preview is the exact thumbnail Figma itself ships in the file.</div>
+	</div>
+
+	<div class="grid">
+		<div class="card">
+			<h2>Document</h2>
+			<div class="row"><span class="k">Title (meta.json)</span><span class="v" id="mTitle">—</span></div>
+			<div class="row"><span class="k">Background</span><span class="v mono" id="mBg">—</span></div>
+			<div class="row"><span class="k">Exported</span><span class="v" id="mExported">—</span></div>
+			<div class="row"><span class="k">File size</span><span class="v" id="mSize">—</span></div>
+			<div class="row"><span class="k">Modified</span><span class="v" id="mModified">—</span></div>
+			<div class="row"><span class="k">Format</span><span class="v mono" id="mFormat">—</span></div>
+		</div>
+		<div class="card">
+			<h2>Contents</h2>
+			<div class="row"><span class="k">canvas.fig</span><span class="v mono" id="mCanvas">—</span></div>
+			<div class="row"><span class="k">Images embedded</span><span class="v" id="mImages">—</span></div>
+			<div class="row"><span class="k">Cover image</span><span class="v" id="mCover">—</span></div>
+			<div class="row"><span class="k">Entries</span><span class="v mono" id="mEntries" style="font-size:11px">—</span></div>
+		</div>
+	</div>
+
+	<div class="actions">
+		<button class="btn primary" id="btnOpen">Open in Figma</button>
+		<button class="btn" id="btnReveal">Reveal in Finder / Explorer</button>
+		<button class="btn" id="btnCopy">Copy file path</button>
+	</div>
+
+	<div class="note">
+		Tip: <b>Figle</b> reads the file <span class="mono">offline</span> — no Figma token needed.
+		Modern <span class="mono">.fig / .jam / .deck</span> files are ZIP archives; the cover is
+		<span class="mono">thumbnail.png</span> + title in <span class="mono">meta.json</span>.
+		Very old exports used a trailing-PNG layout, which this viewer also detects.
+		To edit, use <b>File → Open</b> in Figma Desktop and pick the same file.
+	</div>
+</div>
+
+<script>
+(function () {
+	'use strict';
+	var params = new URLSearchParams(window.location.search);
+	var filePath = params.get('path') || '';
+	var width = params.get('width');
+	var height = params.get('height');
+	var theme = (params.get('theme') || 'DARK').toUpperCase();
+	document.documentElement.setAttribute('data-theme', theme);
+
+	var $ = function (id) { return document.getElementById(id); };
+	var viewer = $('viewer');
+
+	function showError(msg) {
+		var el = $('err');
+		el.style.display = 'block';
+		el.textContent = msg;
+	}
+	function fmtBytes(n) {
+		if (n == null || isNaN(n)) return '—';
+		if (n < 1024) return n + ' B';
+		if (n < 1048576) return (n / 1024).toFixed(1) + ' KB';
+		return (n / 1048576).toFixed(2) + ' MB';
+	}
+	function baseName(p) {
+		if (!p) return 'Figma file';
+		var parts = p.split(/[/\\]/);
+		return parts[parts.length - 1] || p;
+	}
+
+	var name = baseName(filePath);
+	$('fileName').textContent = name;
+	var ext = (name.split('.').pop() || 'fig').toLowerCase();
+	$('formatBadge').textContent = '.' + ext.toUpperCase();
+
+	// 1. Instant paint: Eagle's own generated thumbnail sits next to the file.
+	function eagleThumb(p) {
+		var dot = p.lastIndexOf('.');
+		if (dot < 0) return p + '_thumbnail.png';
+		return p.slice(0, dot) + '_thumbnail.png';
+	}
+	if (filePath) {
+		viewer.src = 'file://' + eagleThumb(filePath);
+		if (width && height) $('dimLabel').textContent = width + ' × ' + height;
+	}
+
+	// 2. Deep inspection with Node (available in Eagle format viewers).
+	try {
+		var fs = null, pathMod = null, utils = null;
+		try { fs = require('fs'); } catch (e) { fs = null; }
+		try { pathMod = require('path'); } catch (e) { pathMod = null; }
+		try { utils = require('../js/fig-utils.js'); } catch (e) { utils = null; }
+
+		if (!fs || !filePath) {
+			$('fileSub').textContent = filePath || 'No file path provided by Eagle.';
+			return;
+		}
+
+		var stat = fs.statSync(filePath);
+		$('mSize').textContent = fmtBytes(stat.size);
+		$('mModified').textContent = new Date(stat.mtime).toLocaleString();
+		$('fileSub').textContent = fmtBytes(stat.size) + '  ·  ' + new Date(stat.mtime).toLocaleString();
+
+		var buffer = fs.readFileSync(filePath);
+		var isZip = utils ? utils.isZip(buffer) : (buffer[0] === 0x50 && buffer[1] === 0x4b);
+
+		if (isZip && utils) {
+			$('formatBadge').classList.add('ok');
+			try {
+				var zip = utils.unzip(buffer);
+				var names = Array.from(zip.keys());
+				$('mEntries').textContent = names.slice(0, 8).join(', ') + (names.length > 8 ? '  (+' + (names.length - 8) + ' more)' : '');
+
+				var imageCount = names.filter(function (n) { return n.indexOf('images/') === 0; }).length;
+				$('mImages').textContent = String(imageCount);
+
+				var meta = utils.parseMeta(zip);
+				if (meta) {
+					var title = meta.file_name || meta.fileName || meta.name || '—';
+					$('mTitle').textContent = title;
+					if (title !== '—') $('fileName').textContent = title + '  (' + name + ')';
+					$('mBg').textContent = meta.background_color || meta.backgroundColor || JSON.stringify(meta).slice(0, 80);
+					$('mExported').textContent = meta.exported_at || meta.exportedAt || '—';
+				} else {
+					$('mTitle').textContent = '—';
+				}
+
+				if (zip.has('thumbnail.png')) {
+					var t = zip.get('thumbnail.png');
+					$('mCover').textContent = 'embedded · ' + fmtBytes(t.length);
+					var dim = utils.pngDimensions(t);
+					if (dim) $('dimLabel').textContent = dim.width + ' × ' + dim.height;
+					// Prefer the true embedded bytes over Eagle's scaled copy.
+					viewer.src = 'data:image/png;base64,' + t.toString('base64');
+				} else {
+					$('mCover').textContent = 'missing — showing generated tile';
+				}
+
+				if (zip.has('canvas.fig')) {
+					var canvas = zip.get('canvas.fig');
+					var prelude = '';
+					try { prelude = canvas.subarray(0, 8).toString('ascii'); } catch (e) {}
+					var ver = 0;
+					try { ver = canvas.readUInt32LE(8); } catch (e) {}
+					$('mCanvas').textContent = fmtBytes(canvas.length) + ' · ' + (prelude || '?') + ' v' + ver;
+					$('mFormat').textContent = 'ZIP · ' + (prelude || 'fig-kiwi?');
+				}
+			} catch (e) {
+				showError('Could not unzip this file (' + e.message + '). Showing thumbnail if available.');
+				$('mFormat').textContent = 'unrecognized container';
+			}
+		} else {
+			// Legacy single-blob layout — look for a trailing PNG.
+			$('mFormat').textContent = 'legacy blob';
+			$('mEntries').textContent = 'n/a (pre-ZIP format)';
+			$('mImages').textContent = 'n/a';
+			if (utils) {
+				var png = utils.extractLargestPng(buffer);
+				if (png) {
+					$('mCover').textContent = 'trailing PNG · ' + fmtBytes(png.length);
+					var d2 = utils.pngDimensions(png);
+					if (d2) $('dimLabel').textContent = d2.width + ' × ' + d2.height;
+					viewer.src = 'data:image/png;base64,' + png.toString('base64');
+				} else {
+					$('mCover').textContent = 'none found';
+				}
+			}
+			$('mCanvas').textContent = fmtBytes(buffer.length);
+		}
+
+		viewer.onerror = function () {
+			$('previewHint').textContent = 'No embedded cover found in this file. It may be corrupt or use an unknown layout — file metadata above was still read successfully.';
+		};
+	} catch (e) {
+		showError('Preview error: ' + e.message);
+	}
+
+	// Actions
+	$('btnOpen').addEventListener('click', function () {
+		try {
+			var shell = null;
+			try { shell = require('electron').shell; } catch (e) {}
+			if (shell && filePath) { shell.openPath(filePath); return; }
+		} catch (e) {}
+		try {
+			var cp = require('child_process');
+			var cmd = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'explorer' : 'xdg-open';
+			cp.execFile(cmd, [filePath]);
+		} catch (e) { showError('Could not open file: ' + e.message); }
+	});
+	$('btnReveal').addEventListener('click', function () {
+		try {
+			var shell2 = null;
+			try { shell2 = require('electron').shell; } catch (e) {}
+			if (shell2 && filePath) { shell2.showItemInFolder(filePath); return; }
+		} catch (e) {}
+		try {
+			var cp2 = require('child_process');
+			if (process.platform === 'darwin') cp2.execFile('open', ['-R', filePath]);
+			else if (process.platform === 'win32') cp2.exec('explorer /select,' + JSON.stringify(filePath));
+			else cp2.execFile('xdg-open', [require('path').dirname(filePath)]);
+		} catch (e) { showError('Could not reveal file: ' + e.message); }
+	});
+	$('btnCopy').addEventListener('click', function (ev) {
+		function done(msg) { ev.target.textContent = msg; setTimeout(function () { ev.target.textContent = 'Copy file path'; }, 1500); }
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(filePath).then(function () { done('Copied ✓'); }, function () { done('Copy failed'); });
+		} else {
+			try {
+				var t = document.createElement('textarea');
+				t.value = filePath; document.body.appendChild(t); t.select();
+				document.execCommand('copy'); document.body.removeChild(t); done('Copied ✓');
+			} catch (e) { done('Copy failed'); }
+		}
+	});
+})();
+</script>
+</body>
+</html>

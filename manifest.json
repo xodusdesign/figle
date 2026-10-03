@@ -1,0 +1,31 @@
+{
+	"id": "7d2e9a41-3f8b-4c1d-9e6a-5b8c7d2e9a41",
+	"version": "1.0.0",
+	"platform": "all",
+	"arch": "all",
+	"name": "Figle",
+	"logo": "/logo.png",
+	"keywords": [
+		"figle",
+		"fig",
+		"jam",
+		"deck",
+		"figma",
+		"figjam",
+		"preview",
+		"thumbnail"
+	],
+	"devTools": false,
+	"preview": {
+		"fig,jam,deck": {
+			"thumbnail": {
+				"path": "thumbnail/fig.js",
+				"size": 400,
+				"allowZoom": false
+			},
+			"viewer": {
+				"path": "viewer/fig.html"
+			}
+		}
+	}
+}
